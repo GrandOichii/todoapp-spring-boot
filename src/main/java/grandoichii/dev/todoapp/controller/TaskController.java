@@ -1,7 +1,6 @@
 package grandoichii.dev.todoapp.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,36 +11,57 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import grandoichii.dev.todoapp.model.Task;
-import grandoichii.dev.todoapp.repository.TaskRepository;
+import grandoichii.dev.todoapp.service.task.TaskNotFoundException;
+import grandoichii.dev.todoapp.service.task.TaskService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/task")
 public class TaskController {
 
     @Autowired
-    private final TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public TaskController(TaskRepository taskRsepository) {
-        this.taskRepository = taskRsepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @GetMapping("/all")
     List<Task> getAll() {
-        return taskRepository.findAll();
+        return taskService.findAll();
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    Task create(@RequestBody Task task) {
-        return taskRepository.add(task);
+    Task create(@Valid @RequestBody Task task) {
+        return taskService.add(task);
     }
 
     @GetMapping("/{id}")
-    Optional<Task> getById(@PathVariable String id) {
-        var result = taskRepository.findById(id);
-        return result;
+    Task getById(@PathVariable String id) {
+        try {
+            var result = taskService.findById(id);
+            return result;            
+        } catch (TaskNotFoundException e) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/toggle/{id}")
+    void toggleComplete(@PathVariable String id) {
+        try {
+            taskService.toggleComplete(id); 
+        } catch (TaskNotFoundException e) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
     }
 
 }
