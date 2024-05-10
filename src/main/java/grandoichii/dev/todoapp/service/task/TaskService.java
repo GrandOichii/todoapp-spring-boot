@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import grandoichii.dev.todoapp.model.Task;
-import grandoichii.dev.todoapp.query.TaskQuery;
 import grandoichii.dev.todoapp.repository.TaskRepository;
 
 
@@ -44,8 +43,8 @@ public class TaskService {
             throw new TaskNotFoundException(String.format("task with id %s not found", id));
 
         var task = result.get();
-        var newTask = task.withCompleted(!task.completed());
-        taskRepository.save(newTask);
+        task.setCompleted(!task.getCompleted());
+        taskRepository.save(task);
     }
 
     public void delete(Integer id)
@@ -54,7 +53,7 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    public List<Task> query(TaskQuery query) {
-        return taskRepository.findByQuery(query);
-    }
+    // public List<Task> query(TaskQuery query) {
+    //     return taskRepository.findByQuery(query);
+    // }
 }

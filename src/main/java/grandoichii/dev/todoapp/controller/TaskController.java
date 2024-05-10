@@ -2,6 +2,8 @@ package grandoichii.dev.todoapp.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import grandoichii.dev.todoapp.model.Task;
-import grandoichii.dev.todoapp.query.TaskQuery;
 import grandoichii.dev.todoapp.service.task.TaskNotFoundException;
 import grandoichii.dev.todoapp.service.task.TaskService;
 import jakarta.validation.Valid;
@@ -36,10 +37,13 @@ public class TaskController {
     List<Task> getAll() {
         return taskService.findAll();
     }
+	private static final Logger log = LoggerFactory.getLogger(TaskController.class);
+
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     Task create(@Valid @RequestBody Task task) {
+        log.info(task.toString());
         return taskService.add(task);
     }
 
@@ -79,9 +83,9 @@ public class TaskController {
         }
     }
 
-    @GetMapping()
-    List<Task> query(TaskQuery query) {
-        return taskService.query(query);
-    }
+    // @GetMapping()
+    // List<Task> query(TaskQuery query) {
+    //     return taskService.query(query);
+    // }
 
 }

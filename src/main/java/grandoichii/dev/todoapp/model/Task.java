@@ -1,32 +1,59 @@
 package grandoichii.dev.todoapp.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 
-public record Task (
+@Entity
+public class Task {
     @Id
-    Integer id,
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    Integer id;
 
     @NotEmpty
-    String title,
+    String title;
 
     @NotEmpty
-    String text,
+    String text;
 
-    Boolean completed,
+    Boolean completed = false;
 
-    @Version
-    Integer version
-) {
-    static int count = 0;
-    public Task {
-        if (completed == null) completed = false;
-        if (id == null) id = ++count;
+    public Task() {
     }
 
-    public Task withCompleted(Boolean completed) {
-        return new Task(this.id, this.title, this.text, completed, this.version);
+    public Integer getId() {
+        return id;
     }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
 }
