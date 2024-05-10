@@ -1,4 +1,4 @@
-package grandoichii.dev.todoapp;
+package grandoichii.dev.todoapp.config.auth;
 
 import java.security.Key;
 import java.util.Date;

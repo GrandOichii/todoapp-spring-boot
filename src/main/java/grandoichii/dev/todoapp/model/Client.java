@@ -40,6 +40,7 @@ public class Client implements UserDetails {
     }
 
     public Role getRole() { return role; }
+    public Integer getId() { return id; }
     public String getPasswordHash() { return passwordHash; }
 
     @Override
