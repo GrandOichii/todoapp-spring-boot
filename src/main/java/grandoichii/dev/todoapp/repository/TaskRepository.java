@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.Assert;
 
 import grandoichii.dev.todoapp.model.Task;
 // import jakarta.annotation.PostConstruct;
@@ -28,20 +29,28 @@ public class TaskRepository {
     }
 
     public Optional<Task> findById(String id) {
-        var updated = jdbcClient.sql("select * from task where id = :id")
+        return jdbcClient.sql("select * from task where id = :id")
             .param("id", id)
             .query(Task.class)
-            .list();
-        if (updated.isEmpty()) return Optional.empty();
-
-        return Optional.ofNullable(updated.get(0));
+            .optional();
     }
 
-    // public Task add(Task newTask) {
-    // }
+    public Task add(Task newTask) {
+        // TODO replace auto genevrated id
 
-    // public void update(String id, Task newTask) {
-    // }
+        var updated = jdbcClient.sql("insert into Task(id, title, text, completed) values (?,?,?,?)")
+            .params(List.of(newTask.id(), newTask.title(), newTask.text(), newTask.completed()))
+            .update();
+        Assert.state(updated == 1, "Failed to create task " + newTask.title() );
+        return newTask;
+    }
+
+    public void update(String id, Task newTask) {
+        var updated = jdbcClient.sql("update Task set title = ?, text = ?, completed = ? where id = ?")
+            .params(List.of(newTask.title(), newTask.text(), newTask.completed(), id))
+            .update();
+            Assert.state(updated == 1, "Failed to update task with id " + id);
+    }
 
     // private final List<Task> tasks = new ArrayList<>();
 

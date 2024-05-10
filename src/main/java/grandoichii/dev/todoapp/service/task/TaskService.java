@@ -21,9 +21,9 @@ public class TaskService {
         return taskRepository.findAll();
     }
 
-    // public Task add(Task newTask) {
-    //     return taskRepository.add(newTask);
-    // }
+    public Task add(Task newTask) {
+        return taskRepository.add(newTask);
+    }
 
     public Task findById(String id)
         throws TaskNotFoundException
@@ -34,15 +34,15 @@ public class TaskService {
         throw new TaskNotFoundException(String.format("task with id %s not found", id));
     }
 
-    // public void toggleComplete(String id)
-    //     throws TaskNotFoundException
-    // {
-    //     var result = taskRepository.findById(id);
-    //     if (result.isEmpty()) 
-    //         throw new TaskNotFoundException(String.format("task with id %s not found", id));
+    public void toggleComplete(String id)
+        throws TaskNotFoundException
+    {
+        var result = taskRepository.findById(id);
+        if (result.isEmpty()) 
+            throw new TaskNotFoundException(String.format("task with id %s not found", id));
 
-    //     var task = result.get();
-    //     var newTask = task.withCompleted(!task.completed());
-    //     taskRepository.update(id, newTask);
-    // }
+        var task = result.get();
+        var newTask = task.withCompleted(!task.completed());
+        taskRepository.update(id, newTask);
+    }
 }

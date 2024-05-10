@@ -34,11 +34,11 @@ public class TaskController {
         return taskService.findAll();
     }
 
-    // @ResponseStatus(HttpStatus.CREATED)
-    // @PostMapping
-    // Task create(@Valid @RequestBody Task task) {
-    //     return taskService.add(task);
-    // }
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
+    Task create(@Valid @RequestBody Task task) {
+        return taskService.add(task);
+    }
 
     @GetMapping("/{id}")
     Task getById(@PathVariable String id) {
@@ -52,16 +52,16 @@ public class TaskController {
         }
     }
 
-    // @ResponseStatus(HttpStatus.NO_CONTENT)
-    // @PostMapping("/toggle/{id}")
-    // void toggleComplete(@PathVariable String id) {
-    //     try {
-    //         taskService.toggleComplete(id); 
-    //     } catch (TaskNotFoundException e) {
-    //         throw new ResponseStatusException(
-    //             HttpStatus.NOT_FOUND, e.getMessage()
-    //         );
-    //     }
-    // }
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping("/toggle/{id}")
+    void toggleComplete(@PathVariable String id) {
+        try {
+            taskService.toggleComplete(id); 
+        } catch (TaskNotFoundException e) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND, e.getMessage()
+            );
+        }
+    }
 
 }
