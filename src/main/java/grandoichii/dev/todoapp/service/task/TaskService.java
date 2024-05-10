@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import grandoichii.dev.todoapp.model.Task;
+import grandoichii.dev.todoapp.query.TaskQuery;
 import grandoichii.dev.todoapp.repository.TaskRepository;
+
 
 @Service
 public class TaskService {
@@ -52,5 +54,9 @@ public class TaskService {
         var amount = taskRepository.delete(id);
         if (amount == 0) 
             throw new TaskNotFoundException(String.format("task with id %s not found", id));
+    }
+
+    public List<Task> query(TaskQuery query) {
+        return taskRepository.query(query);
     }
 }

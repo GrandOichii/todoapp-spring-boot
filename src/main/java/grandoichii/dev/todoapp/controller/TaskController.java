@@ -15,9 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import grandoichii.dev.todoapp.model.Task;
+import grandoichii.dev.todoapp.query.TaskQuery;
 import grandoichii.dev.todoapp.service.task.TaskNotFoundException;
 import grandoichii.dev.todoapp.service.task.TaskService;
 import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/task")
@@ -75,6 +77,11 @@ public class TaskController {
                 HttpStatus.NOT_FOUND, e.getMessage()
             );
         }
+    }
+
+    @GetMapping()
+    List<Task> query(TaskQuery query) {
+        return taskService.query(query);
     }
 
 }

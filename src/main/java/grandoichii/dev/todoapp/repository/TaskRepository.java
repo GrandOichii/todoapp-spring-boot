@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 
 import grandoichii.dev.todoapp.model.Task;
+import grandoichii.dev.todoapp.query.TaskQuery;
 // import jakarta.annotation.PostConstruct;
 
 @Repository
@@ -56,6 +57,17 @@ public class TaskRepository {
         return jdbcClient.sql("delete from Task where id = :id")
             .param("id", id)
             .update();
+    }
+
+    public List<Task> query(TaskQuery query) {
+        return jdbcClient.sql("select * from Task where title like ? and text like ?")
+            .params(List.of(
+                "%" + query.title() + "%",
+                "%" + query.text() + "%"
+            ))
+            .query(Task.class)
+            .list();
+
     }
 
     // private final List<Task> tasks = new ArrayList<>();
