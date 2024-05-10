@@ -44,7 +44,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
-    Task getById(@PathVariable String id) {
+    Task getById(@PathVariable Integer id) {
         try {
             var result = taskService.findById(id);
             return result;            
@@ -57,7 +57,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/toggle/{id}")
-    void toggleComplete(@PathVariable String id) {
+    void toggleComplete(@PathVariable Integer id) {
         try {
             taskService.toggleComplete(id); 
         } catch (TaskNotFoundException e) {
@@ -69,7 +69,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    void delete(@PathVariable String id) {
+    void delete(@PathVariable Integer id) {
         try {
             taskService.delete(id); 
         } catch (TaskNotFoundException e) {
