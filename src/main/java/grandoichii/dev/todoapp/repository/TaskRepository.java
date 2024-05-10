@@ -49,7 +49,13 @@ public class TaskRepository {
         var updated = jdbcClient.sql("update Task set title = ?, text = ?, completed = ? where id = ?")
             .params(List.of(newTask.title(), newTask.text(), newTask.completed(), id))
             .update();
-            Assert.state(updated == 1, "Failed to update task with id " + id);
+        Assert.state(updated == 1, "Failed to update task with id " + id);
+    }
+
+    public int delete(String id) {
+        return jdbcClient.sql("delete from Task where id = :id")
+            .param("id", id)
+            .update();
     }
 
     // private final List<Task> tasks = new ArrayList<>();

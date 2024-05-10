@@ -45,4 +45,12 @@ public class TaskService {
         var newTask = task.withCompleted(!task.completed());
         taskRepository.update(id, newTask);
     }
+
+    public void delete(String id)
+        throws TaskNotFoundException
+    {
+        var amount = taskRepository.delete(id);
+        if (amount == 0) 
+            throw new TaskNotFoundException(String.format("task with id %s not found", id));
+    }
 }
