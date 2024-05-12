@@ -3,6 +3,9 @@ create table if not exists Task (
     title varchar(50) not null,
     text varchar(500) not null,
     completed boolean not null,
+
+    owner_id int not null,
+    foreign key (owner_id) references Client(id),
     
     primary key (id)
 );

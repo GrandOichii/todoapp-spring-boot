@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import grandoichii.dev.todoapp.config.auth.JwtService;
 import grandoichii.dev.todoapp.model.Task;
-import grandoichii.dev.todoapp.service.task.TaskNotFoundException;
+import grandoichii.dev.todoapp.service.task.TaskException;
 import grandoichii.dev.todoapp.service.task.TaskService;
 import jakarta.validation.Valid;
 
@@ -25,34 +27,46 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/task")
 public class TaskController {
+    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
 
-    @Autowired
     private final TaskService taskService;
-
-    public TaskController(TaskService taskService) {
+    private final JwtService jwtService;
+    
+    @Autowired
+    public TaskController(TaskService taskService, JwtService jwtService) {
         this.taskService = taskService;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/all")
-    List<Task> getAll() {
-        return taskService.findAll();
+    List<Task> getAll(
+        @RequestHeader (name="Authorization") String token
+    ) {
+        var id = getId(token);
+        return taskService.findAll(id);
     }
-	private static final Logger log = LoggerFactory.getLogger(TaskController.class);
 
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    Task create(@Valid @RequestBody Task task) {
-        log.info(task.toString());
-        return taskService.add(task);
+    Task create(
+        @Valid @RequestBody Task task,
+        @RequestHeader (name="Authorization") String token
+    ) {
+        var id = getId(token);
+        return taskService.add(task, id);
     }
 
     @GetMapping("/{id}")
-    Task getById(@PathVariable Integer id) {
+    Task getById(
+        @PathVariable Integer id,
+        @RequestHeader (name="Authorization") String token
+    ) {
         try {
-            var result = taskService.findById(id);
+            var ownerId = getId(token);
+            var result = taskService.findById(id, ownerId);
             return result;            
-        } catch (TaskNotFoundException e) {
+        } catch (TaskException e) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, e.getMessage()
             );
@@ -61,10 +75,15 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/toggle/{id}")
-    void toggleComplete(@PathVariable Integer id) {
+    void toggleComplete(
+        @PathVariable Integer id,
+        @RequestHeader (name="Authorization") String token
+    ) {
         try {
-            taskService.toggleComplete(id); 
-        } catch (TaskNotFoundException e) {
+            var ownerId = getId(token);
+
+            taskService.toggleComplete(id, ownerId); 
+        } catch (TaskException e) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, e.getMessage()
             );
@@ -73,14 +92,23 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    void delete(@PathVariable Integer id) {
+    void delete(
+        @PathVariable Integer id,
+        @RequestHeader (name="Authorization") String token
+    ) {
         try {
-            taskService.delete(id); 
-        } catch (TaskNotFoundException e) {
+            var ownerId = getId(token);
+
+            taskService.delete(id, ownerId); 
+        } catch (TaskException e) {
             throw new ResponseStatusException(
                 HttpStatus.NOT_FOUND, e.getMessage()
             );
         }
+    }
+
+    private Integer getId(String token) {
+        return jwtService.extractId(token.substring(7));
     }
 
     // @GetMapping()

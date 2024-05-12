@@ -34,11 +34,14 @@ public class FilterChainConfig  {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/error").permitAll()
                 .requestMatchers("/api/auth/*").permitAll()
                 .requestMatchers(
+                    // Swagger
                     "/v3/api-docs/**",
-                    "/swagger-ui/**"
+                    "/swagger-ui/**",
+
+                    // Errors
+                    "/error"
                 ).permitAll()
                 .anyRequest().authenticated()
             )

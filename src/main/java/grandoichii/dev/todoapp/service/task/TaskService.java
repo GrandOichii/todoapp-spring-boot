@@ -18,38 +18,46 @@ public class TaskService {
         this.taskRepository = taskRsepository;
     }    
 
-    public List<Task> findAll() {
-        return taskRepository.findAll();
+    public List<Task> findAll(Integer ownerId) {
+        return taskRepository.findByOwnerId(ownerId);
     }
 
-    public Task add(Task newTask) {
+    public Task add(Task newTask, Integer ownerId) {
+        newTask.setOwnerId(ownerId);
         return taskRepository.save(newTask);
     }
 
-    public Task findById(Integer id)
-        throws TaskNotFoundException
-    {
-        var result = taskRepository.findById(id);
-        if (result.isPresent()) return result.get();
-
-        throw new TaskNotFoundException(String.format("task with id %s not found", id));
-    }
-
-    public void toggleComplete(Integer id)
-        throws TaskNotFoundException
+    public Task findById(Integer id, Integer ownerId)
+        throws TaskNotFoundException, MismatchedTaskOwnerIdException
     {
         var result = taskRepository.findById(id);
         if (result.isEmpty()) 
             throw new TaskNotFoundException(String.format("task with id %s not found", id));
+        var task =  result.get();
+        if (!task.getOwnerId().equals(ownerId))
+            throw new MismatchedTaskOwnerIdException("task %s is not owned by %s".formatted(id, ownerId));
+        return task;
+    }
 
+    public void toggleComplete(Integer id, Integer ownerId)
+        throws TaskNotFoundException, MismatchedTaskOwnerIdException
+    {
+        var result = taskRepository.findById(id);
+        if (result.isEmpty()) 
+            throw new TaskNotFoundException(String.format("task with id %s not found", id));
+            
         var task = result.get();
+        if (!task.getOwnerId().equals(ownerId))
+            throw new MismatchedTaskOwnerIdException("task %s is not owned by %s".formatted(id, ownerId));
+
         task.setCompleted(!task.getCompleted());
         taskRepository.save(task);
     }
 
-    public void delete(Integer id)
-        throws TaskNotFoundException
+    public void delete(Integer id, Integer ownerId)
+        throws TaskNotFoundException, MismatchedTaskOwnerIdException
     {
+        findById(id, ownerId);
         taskRepository.deleteById(id);
     }
 

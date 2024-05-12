@@ -34,12 +34,14 @@ public class JwtService {
 
     public String generate(
         Map<String, Object> extraClaims,
-        UserDetails userDetails
+        UserDetails userDetails,
+        Integer id
     ) {
         return Jwts
             .builder()
             .setClaims(extraClaims) 
             .setSubject(userDetails.getUsername())
+            .setId(id.toString())
             .setIssuedAt(new Date(System.currentTimeMillis()))
             .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
             .signWith(getSignInKey(), SignatureAlgorithm.HS256)
@@ -60,6 +62,12 @@ public class JwtService {
 
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public Integer extractId(String token) {
+        return Integer.valueOf(
+            extractClaim(token, Claims::getId)
+        );
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

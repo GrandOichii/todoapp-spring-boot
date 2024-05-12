@@ -54,7 +54,7 @@ public class ClientService implements UserDetailsService {
             client.password())
         );
         var existing = findByUsername(client.username());
-        var token = jwtService.generate(new HashMap<>(), existing);
+        var token = jwtService.generate(new HashMap<>(), existing, existing.getId());
         return new LoginResult(existing.getId(), token);
     }
 
