@@ -21,12 +21,10 @@ import jakarta.validation.constraints.NotNull;
 // @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    @Autowired
     private final JwtService jwtService;
+    private final ClientService clientService;
     
     @Autowired
-    private final ClientService clientService;
-
     public JwtAuthenticationFilter(JwtService jwtService, ClientService clientService) {
         this.jwtService = jwtService;
         this.clientService = clientService;

@@ -11,9 +11,9 @@ import grandoichii.dev.todoapp.repository.TaskRepository;
 
 @Service
 public class TaskService {
-    @Autowired
     private final TaskRepository taskRepository;
-
+    
+    @Autowired
     public TaskService(TaskRepository taskRsepository) {
         this.taskRepository = taskRsepository;
     }    

@@ -11,11 +11,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class AuthenticationProviderConfig {
 
-    @Autowired
     public final PasswordEncoder passwordEncoder;
-    @Autowired
     public final UserDetailsService userDetailsService;
-
+    
+    @Autowired
     public AuthenticationProviderConfig(PasswordEncoder passwordEncoder, UserDetailsService userDetailsService) {
         this.passwordEncoder = passwordEncoder;
         this.userDetailsService = userDetailsService;
