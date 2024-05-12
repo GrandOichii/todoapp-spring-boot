@@ -21,8 +21,8 @@ import grandoichii.dev.todoapp.config.auth.JwtService;
 import grandoichii.dev.todoapp.model.Task;
 import grandoichii.dev.todoapp.service.task.TaskException;
 import grandoichii.dev.todoapp.service.task.TaskService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
-
 
 @RestController
 @RequestMapping("/api/task")
@@ -39,6 +39,7 @@ public class TaskController {
     }
 
     @GetMapping("/all")
+    @SecurityRequirement(name = "Authorization")
     List<Task> getAll(
         @RequestHeader (name="Authorization") String token
     ) {
@@ -49,6 +50,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
+    @SecurityRequirement(name = "Authorization")
     Task create(
         @Valid @RequestBody Task task,
         @RequestHeader (name="Authorization") String token
@@ -58,6 +60,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     Task getById(
         @PathVariable Integer id,
         @RequestHeader (name="Authorization") String token
@@ -75,6 +78,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/toggle/{id}")
+    @SecurityRequirement(name = "Authorization")
     void toggleComplete(
         @PathVariable Integer id,
         @RequestHeader (name="Authorization") String token
@@ -92,6 +96,7 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "Authorization")
     void delete(
         @PathVariable Integer id,
         @RequestHeader (name="Authorization") String token
